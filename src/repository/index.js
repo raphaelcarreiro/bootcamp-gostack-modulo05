@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { FaSpinner } from 'react-icons/fa';
 import Container from '../container';
 import { Loading, Owner } from './styles';
+import { Link } from 'react-router-dom';
 
 export default function Repository(props) {
   const [repository, setRepository] = useState({});
@@ -40,6 +41,7 @@ export default function Repository(props) {
       {!loading ? (
         <Container>
           <Owner>
+            <Link to="/">Voltar aos repositórios</Link>
             <img
               src={repository.owner.avatar_url}
               alt={repository.owner.login}
@@ -47,7 +49,7 @@ export default function Repository(props) {
             <h1>{repository.name}</h1>
             <p>{repository.description}</p>
           </Owner>
-          <h1>Issues</h1>
+          <h1 />
         </Container>
       ) : (
         <Loading>
