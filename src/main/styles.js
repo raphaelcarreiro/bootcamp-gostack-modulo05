@@ -5,13 +5,24 @@ export const Form = styled.form`
   display: flex;
   flex-direction: row;
 
+  .input {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: 3px;
+  }
+
   input {
     flex: 1;
-    border: 1px solid #eee;
+    border: 1px solid ${props => (props.error ? 'red' : '#eee')};
     padding: 10px 15px;
     border-radius: 4px;
     font-size: 16px;
   }
+`;
+
+export const TextError = styled.small`
+  color: red;
 `;
 
 const rotate = keyframes`
