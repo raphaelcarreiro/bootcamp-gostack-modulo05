@@ -3,7 +3,7 @@ import api from '../services/api';
 import PropTypes from 'prop-types';
 import { FaSpinner } from 'react-icons/fa';
 import Container from '../container';
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, Paginator } from './styles';
 import { Link } from 'react-router-dom';
 
 export default function Repository(props) {
@@ -11,6 +11,8 @@ export default function Repository(props) {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const { params } = props.match;
+  const [errorLoadRepo, setErroLoadRepo] = useState(false);
+  const [page, setPage] = useState(1);
 
   const repoName = decodeURIComponent(params.repository);
 
@@ -20,6 +22,7 @@ export default function Repository(props) {
       api.get(`repos/${repoName}`),
       api.get(`repos/${repoName}/issues`, {
         params: {
+          page: page,
           state: 'open',
           per_page: 5,
         },
@@ -27,18 +30,30 @@ export default function Repository(props) {
     ])
       .then(response => {
         const [r, i] = response;
-
         setRepository(r.data);
         setIssues(i.data);
+      })
+      .catch(err => {
+        if (err.response && err.response.status === 403) {
+          setErroLoadRepo(true);
+        }
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [repoName]);
+  }, [repoName, page]);
+
+  function handleNextPage() {
+    setPage(page + 1);
+  }
+
+  function handlePriorPage() {
+    setPage(page - 1);
+  }
 
   return (
     <Fragment>
-      {!loading ? (
+      {!loading && !errorLoadRepo ? (
         <Container>
           <Owner>
             <Link to="/">Voltar aos repositórios</Link>
@@ -67,6 +82,12 @@ export default function Repository(props) {
               );
             })}
           </IssueList>
+          <Paginator>
+            <button disabled={page === 1} onClick={handlePriorPage}>
+              Anterior
+            </button>
+            <button onClick={handleNextPage}>Próximo</button>
+          </Paginator>
         </Container>
       ) : (
         <Loading>

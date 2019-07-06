@@ -108,3 +108,23 @@ export const IssueList = styled.ul`
     color: #999;
   }
 `;
+
+export const Paginator = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 10px;
+
+  button {
+    border: 0;
+    background: #7159c1;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px 15px;
+    border-radius: 4px;
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+`;

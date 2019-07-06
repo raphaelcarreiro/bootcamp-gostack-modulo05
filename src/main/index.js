@@ -32,14 +32,21 @@ export default function Main() {
       .get('/repos/' + newRepo)
       .then(response => {
         const copyRepo = repositories.slice();
+        const checkExists = copyRepo.find(
+          item => item.name === response.data.full_name
+        );
+        if (checkExists) throw new Error('Repositório duplicado');
         copyRepo.push({ name: response.data.full_name });
         setRepositories(copyRepo);
         setNewRepo('');
       })
       .catch(err => {
-        if (err.response.status === 404) {
+        if (err.response && err.response.status === 404) {
           setInputError(true);
           setTextError('Repositório não encontrado');
+        } else {
+          setInputError(true);
+          setTextError(err.message);
         }
       })
       .finally(() => {
@@ -61,16 +68,15 @@ export default function Main() {
             type="text"
             placeholder="Adicionar repositório"
           />
-          <TextError>{inputError ? textError : null}</TextError>
+          <SubmitButton isLoading={loading}>
+            {loading ? (
+              <FaSpinner color="#fff" size={14} />
+            ) : (
+              <FaPlus color="#fff" size={14} />
+            )}
+          </SubmitButton>
         </div>
-
-        <SubmitButton isLoading={loading}>
-          {loading ? (
-            <FaSpinner color="#fff" size={14} />
-          ) : (
-            <FaPlus color="#fff" size={14} />
-          )}
-        </SubmitButton>
+        <TextError>{inputError ? textError : null}</TextError>
       </Form>
       <List>
         {repositories.map(repo => (
